@@ -9,18 +9,45 @@ class StudentController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    const API_URL = "http://127.0.0.1:8000/api/students";
+
+    public function index(Request $request)
     {
+        $current_url = url()->current();
         $client = new Client();
-        $url = "http://127.0.0.1:8000/api/students";
+
+        // ambil base URL
+        $url = self::API_URL;
+
+        // kalau ada pagination page
+        if ($request->has('page')) {
+            $url .= '?page=' . $request->input('page');
+        }
+
+        // request ke API
         $response = $client->request('GET', $url);
         $content = $response->getBody()->getContents();
-        $contentArray = json_decode($content, true);
-        $students = $contentArray['data'];
 
-        return view('student.index', [
-            'students' => $students
-        ]);
+        // decode JSON
+        $contentArray = json_decode($content, true);
+
+        // langsung pakai (karena tanpa wrapper)
+        $students = $contentArray;
+
+        // 🔥 FIX pagination links
+        if (isset($students['links'])) {
+            foreach ($students['links'] as $key => $value) {
+
+                if ($value['url'] != null) {
+                    $students['links'][$key]['url2'] =
+                        str_replace(self::API_URL, $current_url, $value['url']);
+                } else {
+                    $students['links'][$key]['url2'] = null;
+                }
+            }
+        }
+
+        return view('student.index', ['students' => $students]);
     }
 
     /**

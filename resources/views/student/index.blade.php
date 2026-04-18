@@ -125,9 +125,8 @@
                 </tr>
             </thead>
             <tbody>
-                <?php $i = 1; ?>
-
-                @foreach ($students as $data)
+                <?php $i = $students['from']; ?>
+                @foreach ($students['data'] as $data)
                 <tr>
                     <td>{{ $i++ }}</td>
                     <td>{{ $data['nim'] }}</td>
@@ -153,6 +152,19 @@
 
             </tbody>
         </table>
+        @if ($students['links'])
+        <nav>
+            <ul class="pagination">
+                @foreach ($students['links'] as $item)
+                    <li class="page-item {{ $item['active'] ? 'active' : '' }}">
+                        <a class="page-link" href="{{ $item['url2'] }}">
+                            {!! $item['label'] !!}
+                        </a>
+                    </li>
+                @endforeach
+            </ul>
+        </nav>
+        @endif
     </div>
     @endif
     <!-- AKHIR DATA -->

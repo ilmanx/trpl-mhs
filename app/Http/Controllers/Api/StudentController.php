@@ -14,16 +14,10 @@ class StudentController extends Controller
      */
     public function index()
     {
-        // mengambil data student berdasarkan NIM (ascending)
-        $data = Student::orderBy('nim', 'asc')->get();
-
-        // response dalam bentuk JSON
-        return response()->json([
-            'status'  => true,
-            'message' => 'Data ditemukan',
-            'data'    => $data,
-        ], 200);
+        $students = Student::orderBy('nim', 'asc')->paginate(10);
+        return response()->json($students);
     }
+    
 
     /**
      * Store a newly created resource in storage.
